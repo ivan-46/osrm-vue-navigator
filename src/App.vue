@@ -12,7 +12,13 @@ osrm.on('updatePoints', data => {
   points.value = data
 })
 
-osrm.addPoint({})
+
+//test
+for (let i = 0; i < 8; i++) {
+  osrm.addPoint({})
+}
+
+
 
 
 </script>
@@ -25,7 +31,7 @@ osrm.addPoint({})
       <p>foot</p>
     </div>
     <div class="osrmList">
-      <RoutePoint v-for="point in points" :key="point.id" />
+      <RoutePoint v-for="point in points" :point="point" :key="point.id" />
     </div>
   </div>
 </template>

@@ -1,9 +1,9 @@
 <template>
     <div class="RoutePoint">
-        <div class="RoutePointCircle"></div>
+        <div class="RoutePointCircle" :style="`background-color:${point.color};`"></div>
         <div class="RoutePointData">
             <div class="RoutePointDataAddress">
-                <input type="text" placeholder="55.23232 22.232323">
+                <input type="text" :placeholder="placeholderInput">
             </div>
 
             <div class="RoutePointDataBtns">
@@ -17,6 +17,16 @@
     </div>
 </template>
 <script setup lang="ts">
+import { computed } from "vue";
+import { TPoint } from "../../utility/Osrm";
+
+const { point } = defineProps<{ point: TPoint }>()
+
+const placeholderInput = computed(() => {
+    return point.coordinate ? point.coordinate.join(",") : "What do you want to find?"
+})
+
+console.log(point)
 
 </script>
 <style lang="scss" scoped>
@@ -70,7 +80,6 @@
         min-height: 15px;
         width: 15px;
         height: 15px;
-        background-color: red;
         border-radius: 100%;
     }
 

@@ -14,7 +14,7 @@ type TPointAdd = {
     coordinate?: Coordinate
 }
 
-interface TPoint extends TPointAdd {
+export interface TPoint extends TPointAdd {
     id: string,
     color: string
 }
