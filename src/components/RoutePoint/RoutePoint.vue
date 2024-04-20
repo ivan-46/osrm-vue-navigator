@@ -7,9 +7,8 @@
             </div>
 
             <div class="RoutePointDataBtns">
-                <button>
-                    <img src="./icon/clear.png" alt="">
-                </button>
+                <ButtonIcon :height="20" :src="makerImg" />
+                <ButtonIcon :height="15" :src="clearImg" />
             </div>
         </div>
 
@@ -19,6 +18,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { TPoint } from "../../utility/Osrm";
+import ButtonIcon from "../ButtonIcon.vue"
+
+import makerImg from "./icon/marker.svg"
+import clearImg from "./icon/clear.png"
 
 const { point } = defineProps<{ point: TPoint }>()
 
@@ -52,7 +55,7 @@ console.log(point)
             gap: 15px;
 
             input {
-                font-size: 1.1em;
+                font-size: 1.05em;
             }
 
         }
@@ -62,13 +65,7 @@ console.log(point)
             display: flex;
             gap: 5px;
 
-            button {
-                cursor: pointer;
-
-                img {
-                    height: 15px;
-                }
-            }
+           
         }
     }
 
