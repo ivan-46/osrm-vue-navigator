@@ -19,7 +19,7 @@ interface TPoint extends TPointAdd {
     color: string
 }
 
-class OsrmNavigator {
+export default class OsrmNavigator {
 
     private events: { [key: string]: EventHandler[] };
 
@@ -101,4 +101,3 @@ class OsrmNavigator {
     }
 
 }
-export default OsrmNavigator

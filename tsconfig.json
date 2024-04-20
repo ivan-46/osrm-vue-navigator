@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "typeRoots": ["src/osrmGlobal.d.ts"],
+    "typeRoots": ["src/*.d.ts"],
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
