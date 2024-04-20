@@ -4,8 +4,19 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 
 
+type EventHandler = (data: any) => void;
 
-class OsrmNavigator {
+type TEventNames = 'updatePoints'
+type TPoint = {
+    id: string,
+    address: string,
+    coordinate: Coordinate
+}
+
+export default class OsrmNavigator {
+
+    private events: { [key: string]: EventHandler[] };
+
     map: Map
     layersRouteLayer = new VectorLayer({
         source: new VectorSource({})
@@ -13,24 +24,67 @@ class OsrmNavigator {
 
     layersRouteSource = this.layersRouteLayer.getSource()
 
-    layersPointsLayer = new VectorLayer({
+    private layersPointsLayer = new VectorLayer({
         source: new VectorSource({})
     })
 
-    layersPointseSource = this.layersRouteLayer.getSource()
+    _points: TPoint[] = []
 
     colors = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#00FFFF", "#0000FF", "#800080", "#FFC0CB"]
 
+
     constructor(map: Map) {
         this.map = map
+        this.events = {};
     }
 
-    addPoint(coordinate: Coordinate) {
 
+    on(eventName: TEventNames, handler: EventHandler) {
+        if (!this.events[eventName]) {
+            this.events[eventName] = [];
+        }
+        this.events[eventName].push(handler);
     }
-    removePoint() {
 
+    private emit(eventName: TEventNames, data: any): void {
+        const event = this.events[eventName];
+        if (event) {
+            event.forEach(fn => {
+                fn.call(null, data);
+            });
+        }
     }
+
+    enable() {
+        this.map.addLayer(this.layersPointsLayer)
+        this.map.addLayer(this.layersRouteLayer)
+    }
+
+    disable() {
+        this.map.removeLayer(this.layersPointsLayer)
+        this.map.removeLayer(this.layersRouteLayer)
+    }
+
+
+    getPoints() {
+        return this._points
+    }
+
+    addPoint(point: TPoint) {
+        this._points.push(point)
+        this.emit('updatePoints', this.getPoints());
+    }
+
+    removePoint(point: TPoint) {
+        const i = this._points.indexOf(point)
+
+        if (i >= 0) {
+            this._points.splice(i, 1)
+        }
+
+        this.emit('updatePoints', this.getPoints());
+    }
+
     async getFeatchOsrmApi() {
 
     }
