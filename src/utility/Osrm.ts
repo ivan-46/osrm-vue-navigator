@@ -2,18 +2,24 @@ import Map from 'ol/Map.js';
 import { Coordinate } from 'ol/coordinate';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
+import { uuidv4 } from './uuid';
 
 
 type EventHandler = (data: any) => void;
 
 type TEventNames = 'updatePoints'
-type TPoint = {
-    id: string,
-    address: string,
-    coordinate: Coordinate
+
+type TPointAdd = {
+    address?: string,
+    coordinate?: Coordinate
 }
 
-export default class OsrmNavigator {
+interface TPoint extends TPointAdd {
+    id: string,
+    color: string
+}
+
+class OsrmNavigator {
 
     private events: { [key: string]: EventHandler[] };
 
@@ -70,7 +76,12 @@ export default class OsrmNavigator {
         return this._points
     }
 
-    addPoint(point: TPoint) {
+    addPoint(_point: TPointAdd) {
+        const point: TPoint = {
+            ..._point,
+            id: uuidv4(),
+            color: this.colors[this._points.length]
+        }
         this._points.push(point)
         this.emit('updatePoints', this.getPoints());
     }
@@ -90,3 +101,4 @@ export default class OsrmNavigator {
     }
 
 }
+export default OsrmNavigator

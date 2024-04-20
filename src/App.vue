@@ -3,7 +3,6 @@
 import { ref } from 'vue'
 import RoutePoint from './components/RoutePoint/RoutePoint.vue'
 import OsrmNavigator from './utility/Osrm'
-import { uuidv4 } from './utility/uuid'
 
 
 const osrm = new OsrmNavigator(window.olMap)
@@ -13,11 +12,7 @@ osrm.on('updatePoints', data => {
   points.value = data
 })
 
-osrm.addPoint({
-  id: uuidv4(),
-  address: '',
-  coordinate: []
-})
+osrm.addPoint({})
 
 
 </script>

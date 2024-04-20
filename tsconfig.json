@@ -14,17 +14,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-
+    "typeRoots": ["src/osrmGlobal.d.ts"],
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "files": [
-    "src/osrmGlobal.d.ts"
-  ],
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
- 

@@ -1,5 +1,5 @@
 import Map from 'ol/Map.js';
-export { };
+export {};
 
 declare global {
     interface Window {
