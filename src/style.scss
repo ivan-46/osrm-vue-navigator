@@ -18,19 +18,40 @@ a {
   text-decoration: inherit;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
 body,
 html {
   margin: 0;
+}
+body,
+html {
   display: flex;
   width: 100svw;
   height: 100svh;
+}
+
+button {
+  background: none;
+  border: none;
+}
+
+input {
+  background: none;
+  border: none;
+  outline: none;
 }
 
 #ol-map-osrm {
   width: calc(100% - 500px);
   height: 100%;
 }
-#app-vue-osrm{
-  width:500px;
+#app-vue-osrm {
+  width: 500px;
   height: 100%;
 }
