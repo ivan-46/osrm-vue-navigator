@@ -3,6 +3,7 @@ import { Coordinate } from 'ol/coordinate';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import { uuidv4 } from './uuid';
+import { transform } from 'ol/proj';
 
 
 type EventHandler = (data: any) => void;
@@ -83,17 +84,18 @@ export default class OsrmNavigator {
             color: this.colors[this._points.length]
         }
         this._points.push(point)
-        this.emit('updatePoints', this.getPoints());
+        this.emit('updatePoints', this._points);
     }
 
-    removePoint(point: TPoint) {
-        const i = this._points.indexOf(point)
+    removePoint(i: number) {
+        this._points.splice(i, 1)
+        this.emit('updatePoints', this._points);
+    }
 
-        if (i >= 0) {
-            this._points.splice(i, 1)
-        }
-
-        this.emit('updatePoints', this.getPoints());
+    setCoordinatePoint(i: number, coordinate: Coordinate) {
+        this._points[i].id = uuidv4()
+        this._points[i].coordinate = transform(coordinate, "EPSG:3857", "EPSG:4326")
+        this.emit('updatePoints', this._points);
     }
 
     async getFeatchOsrmApi() {
