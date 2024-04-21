@@ -8,7 +8,7 @@
 
             <div class="RoutePointDataBtns">
                 <ButtonIcon :height="20" :src="makerImg" />
-                <ButtonIcon :height="15" :src="clearImg" />
+                <ButtonIcon @click="onRemove" :height="15" :src="clearImg" />
             </div>
         </div>
 
@@ -17,17 +17,19 @@
 </template>
 <script setup lang="ts">
 import { computed } from "vue";
-import { TPoint } from "../../utility/Osrm";
+import OsrmNavigator, { TPoint } from "../../utility/Osrm";
 import ButtonIcon from "../ButtonIcon.vue"
 
 import makerImg from "./icon/marker.svg"
 import clearImg from "./icon/clear.png"
 
-const { point } = defineProps<{ point: TPoint }>()
+const { point, osrm } = defineProps<{ point: TPoint, osrm: OsrmNavigator }>()
 
 const placeholderInput = computed(() => {
     return point.coordinate ? point.coordinate.join(",") : "What do you want to find?"
 })
+
+const onRemove = () => osrm.removePoint(point)
 
 console.log(point)
 
@@ -65,7 +67,7 @@ console.log(point)
             display: flex;
             gap: 5px;
 
-           
+
         }
     }
 

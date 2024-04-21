@@ -31,7 +31,7 @@ for (let i = 0; i < 8; i++) {
       <p>foot</p>
     </div>
     <div class="osrmList">
-      <RoutePoint v-for="point in points" :point="point" :key="point.id" />
+      <RoutePoint v-for="point in points" :point="point" :osrm="osrm" :key="point.id" />
     </div>
   </div>
 </template>
