@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ButtonIcon from "../ButtonIcon.vue"
-
+// import { Draw, Modify, Select, Snap } from 'ol/interaction.js';
 import makerImg from "./icon/marker.png"
 import clearImg from "./icon/clear.png"
 import PointRouter, { TPoint } from "../../utility/PointMod";
@@ -32,6 +32,7 @@ const point = ref(props.point.getPoint())
 const status = ref<"markerOff" | 'markerMove' | 'markerOn'>()
 const markerXY = ref<[number, number]>([0, 0])
 
+ 
 
 const onRemove = () => props.osrm.removePoint(props.i)
 

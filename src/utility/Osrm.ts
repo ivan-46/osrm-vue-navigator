@@ -1,17 +1,16 @@
 import Map from 'ol/Map.js';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
-import { Feature } from 'ol';
-import { Point } from 'ol/geom';
-
+import { Collection, Feature } from 'ol';
+import { Geometry, Point } from 'ol/geom';
+import { Modify, Draw, Select } from 'ol/interaction.js';
 import PointRouter from './PointMod';
 
 
 
- 
+
 
 type TEventNames = 'updatePoints'
-
 
 
 export default class OsrmNavigator {
@@ -34,11 +33,20 @@ export default class OsrmNavigator {
 
     colors = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#00FFFF", "#0000FF", "#800080", "#FFC0CB"]
 
+    modify: Modify | undefined;
 
     constructor(map: Map) {
         this.map = map
         this.events = {};
         this.map.addLayer(this.layersPointsLayer)
+        const sourceLpoint = this.layersPointsLayer.getSource()
+
+        if (sourceLpoint) {
+            this.modify = new Modify({
+                source: sourceLpoint
+            });
+            this.map.addInteraction(this.modify)
+        }
     }
 
 
@@ -72,7 +80,7 @@ export default class OsrmNavigator {
     getPoints() {
         return this._points
     }
-    
+
     addPoint() {
         const source = this.layersPointsLayer.getSource()
 
@@ -80,7 +88,7 @@ export default class OsrmNavigator {
             return
         }
 
-        this._points.push(new PointRouter(source,null, this.colors[this._points.length]))
+        this._points.push(new PointRouter(source, null, this.colors[this._points.length]))
         this.emit('updatePoints', this._points);
     }
 
@@ -90,7 +98,7 @@ export default class OsrmNavigator {
         this.emit('updatePoints', this._points);
     }
 
-    
+
 
     async getFeatchOsrmApi() {
 

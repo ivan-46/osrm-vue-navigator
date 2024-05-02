@@ -3,7 +3,6 @@ import { Point } from "ol/geom";
 import { uuidv4 } from "./uuid";
 import { Coordinate } from "ol/coordinate";
 import { transform } from "ol/proj";
-import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from 'ol/style/Style';
 import Icon from 'ol/style/Icon';
@@ -51,7 +50,7 @@ export default class PointRouter implements IPointRouter {
     color: string;
     vectorSource: VectorSource<Feature<Point>>;
     events: { [key: string]: EventHandler[] };
-
+    private saveInterval: number = -1
     constructor(vectorSource: VectorSource<Feature<Point>>, feature: Feature<Point> | null, color: string) {
         if (feature) {
             this.feature = feature
@@ -61,9 +60,20 @@ export default class PointRouter implements IPointRouter {
         this.events = {};
     }
 
+    updateInteval() {
+
+    }
 
     private createFeature(coordinate: Coordinate, color: string) {
-        const feature = new Feature({ geometry: new Point(coordinate), })
+        const feature = new Feature({ geometry: new Point(coordinate) })
+        feature.on('change', (e) => {
+            clearInterval(this.saveInterval)
+            this.saveInterval = setTimeout(() => {
+                const coordinate4326 = transform(feature.getGeometry()?.getCoordinates() ?? [], "EPSG:3857", "EPSG:4326")
+                this.fetchNominatim(coordinate4326)
+            }, 50)
+        })
+
         feature.setStyle(this.createStyleforPoint(color))
         return feature
     }
@@ -93,7 +103,17 @@ export default class PointRouter implements IPointRouter {
         this.events[eventName].push(handler);
     }
 
+    fetchNominatim(coordinate4326: Coordinate) {
 
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinate4326[1]}&lon=${coordinate4326[0]}&format=json`).then(r => r.json()).then((r?: { display_name: string }) => {
+            if (r?.display_name) {
+                this.address = r.display_name
+            }
+        })
+            .then(() => {
+                this.emit('updatePoint', this.getPoint());
+            })
+    }
 
     async setCoordinatePoint(coordinate: Coordinate) {
 
@@ -111,13 +131,8 @@ export default class PointRouter implements IPointRouter {
 
         this.vectorSource.addFeature(feature)
 
-        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${coordinate4326[1]}&lon=${coordinate4326[0]}&format=json`).then(r => r.json()).then((r?: { display_name: string }) => {
-            if (r?.display_name) {
-                this.address = r.display_name
-            }
-        }).then(() => {
-            this.emit('updatePoint', this.getPoint());
-        })
+        this.fetchNominatim(coordinate4326)
+
 
 
     }
