@@ -3,7 +3,7 @@
         <div class="RoutePointCircle" :style="`background-color:${point.color};`"></div>
         <div class="RoutePointData">
             <div class="RoutePointDataAddress">
-                <input type="text"
+                <input type="text" :value="point.address"
                     :placeholder='point.coordinate ? point.coordinate.map(item => item.toString().slice(0, 10)).join(",") : "What do you want to find?"'>
             </div>
 
@@ -17,17 +17,19 @@
         :style="`top:${markerXY[1]}px;left:${markerXY[0]}px;`" alt="">
 </template>
 <script setup lang="ts">
-import { ref, toRef } from "vue";
-import OsrmNavigator, { TPoint } from "../../utility/Osrm";
+import { ref } from "vue";
 import ButtonIcon from "../ButtonIcon.vue"
 
 import makerImg from "./icon/marker.png"
 import clearImg from "./icon/clear.png"
+import PointRouter, { TPoint } from "../../utility/PointMod";
+import OsrmNavigator from "../../utility/Osrm";
 
-const props = defineProps<{ point: TPoint, osrm: OsrmNavigator, i: number }>()
-const point = toRef(props.point)
+const props = defineProps<{ point: PointRouter, osrm: OsrmNavigator, i: number }>()
 
-const status = ref<"markerOff" | 'markerMove'>()
+const point = ref(props.point.getPoint())
+
+const status = ref<"markerOff" | 'markerMove' | 'markerOn'>()
 const markerXY = ref<[number, number]>([0, 0])
 
 
@@ -43,9 +45,13 @@ window.addEventListener('mousemove', (e) => {
     }
 })
 
+props.point.on('updatePoint', (pointData: TPoint) => {
+    point.value = pointData
+})
+
 window.olMap.on('click', (e) => {
     if (status.value == 'markerMove') {
-        props.osrm.setCoordinatePoint(props.i, e.coordinate)
+        props.point.setCoordinatePoint(e.coordinate)
         status.value = 'markerOff'
     }
 
@@ -81,10 +87,12 @@ window.olMap.on('click', (e) => {
         &Address {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
+            width: 100%;
 
             input {
-                font-size: 1.05em;
+                font-size: 0.9em;
+                width: 100%;
             }
 
         }

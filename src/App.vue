@@ -15,7 +15,7 @@ osrm.on('updatePoints', data => {
 
 //test
 for (let i = 0; i < 8; i++) {
-  osrm.addPoint({})
+  osrm.addPoint()
 }
 
 
