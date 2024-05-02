@@ -6,12 +6,9 @@ import OsrmNavigator from './utility/Osrm'
 
 
 const osrm = new OsrmNavigator(window.olMap)
-const points = ref(osrm.getPoints())
+const points = osrm.getPoints()
 
-osrm.on('updatePoints', data => {
-  points.value = data
-})
-
+ 
 
 //test
 for (let i = 0; i < 8; i++) {

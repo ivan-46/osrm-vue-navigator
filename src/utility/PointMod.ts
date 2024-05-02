@@ -60,10 +60,6 @@ export default class PointRouter implements IPointRouter {
         this.events = {};
     }
 
-    updateInteval() {
-
-    }
-
     private createFeature(coordinate: Coordinate, color: string) {
         const feature = new Feature({ geometry: new Point(coordinate) })
         feature.on('change', (e) => {
@@ -132,8 +128,6 @@ export default class PointRouter implements IPointRouter {
         this.vectorSource.addFeature(feature)
 
         this.fetchNominatim(coordinate4326)
-
-
 
     }
 

@@ -5,6 +5,7 @@ import { Collection, Feature } from 'ol';
 import { Geometry, Point } from 'ol/geom';
 import { Modify, Draw, Select } from 'ol/interaction.js';
 import PointRouter from './PointMod';
+import { ref } from 'vue';
 
 
 
@@ -29,7 +30,7 @@ export default class OsrmNavigator {
         source: new VectorSource<Feature<Point>>({})
     })
 
-    _points: PointRouter[] = []
+    _points = ref<PointRouter[]>([])
 
     colors = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#00FFFF", "#0000FF", "#800080", "#FFC0CB"]
 
@@ -88,14 +89,13 @@ export default class OsrmNavigator {
             return
         }
 
-        this._points.push(new PointRouter(source, null, this.colors[this._points.length]))
-        this.emit('updatePoints', this._points);
+        this._points.value.push(new PointRouter(source, null, this.colors[this._points.value.length]))
+      
     }
 
 
     removePoint(i: number) {
-        this._points.splice(i, 1)
-        this.emit('updatePoints', this._points);
+        this._points.value.splice(i, 1)
     }
 
 
