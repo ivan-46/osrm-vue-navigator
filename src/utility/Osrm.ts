@@ -6,7 +6,8 @@ import { Geometry, Point } from 'ol/geom';
 import { Modify, Draw, Select } from 'ol/interaction.js';
 import PointRouter from './PointMod';
 import { ref } from 'vue';
-
+import { transform } from 'ol/proj';
+import GeoJSON from 'ol/format/GeoJSON';
 
 function getRandomColor() {
     const randomRed = Math.floor(Math.random() * 256);
@@ -45,6 +46,7 @@ export default class OsrmNavigator {
         this.map = map
         this.events = {};
         this.map.addLayer(this.layersPointsLayer)
+        this.map.addLayer(this.layersRouteLayer)
         const sourceLpoint = this.layersPointsLayer.getSource()
 
         if (sourceLpoint) {
@@ -106,7 +108,19 @@ export default class OsrmNavigator {
 
 
     async getFeatchOsrmApi() {
+        // fetch("https://routing.openstreetmap.de/routed-car/route/v1/driving/5.570068359375001,50.28231945008158;8.596801757812502,49.674737880665994?overview=false&alternatives=true&steps=true")
 
+        const coordinate = this._points.value.filter(item => item.getCoordinate()).map(item => transform(item.getCoordinate() ?? [], 'EPSG:3857', 'EPSG:4326')?.join(",")).join(";")
+        console.log(coordinate)
+        fetch(`https://routing.openstreetmap.de/routed-car/route/v1/driving/${coordinate}?overview=full&geometries=geojson`).then(r => r.json()).then(r => {
+            this.layersRouteSource?.clear()
+            const f = new GeoJSON().readFeature(r.routes[0].geometry, {
+                featureProjection: 'EPSG:3857',
+                dataProjection: 'EPSG:4326'
+            })
+
+            this.layersRouteSource?.addFeature(f)
+        })
     }
 
 }

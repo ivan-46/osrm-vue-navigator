@@ -56,6 +56,7 @@ window.addEventListener('mousemove', (e) => {
 
 props.point.on('updatePoint', (pointData: TPoint) => {
     point.value = pointData
+    props.osrm.getFeatchOsrmApi()
 })
 
 window.olMap.on('click', (e) => {
