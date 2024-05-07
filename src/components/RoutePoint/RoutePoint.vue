@@ -1,6 +1,6 @@
 <template>
     <div class="RoutePoint">
-        <div class="RoutePointCircle" :style="`background-color:${point.color};`"></div>
+        <div :class="classPoint" :style="`background-color:${point.color};`"></div>
         <div class="RoutePointData">
             <div class="RoutePointDataAddress">
                 <input type="text" :value="point.address"
@@ -17,7 +17,7 @@
         :style="`top:${markerXY[1]}px;left:${markerXY[0]}px;`" alt="">
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref, toRef } from "vue";
 import ButtonIcon from "../ButtonIcon.vue"
 // import { Draw, Modify, Select, Snap } from 'ol/interaction.js';
 import makerImg from "./icon/marker.png"
@@ -32,7 +32,15 @@ const point = ref(props.point.getPoint())
 const status = ref<"markerOff" | 'markerMove' | 'markerOn'>()
 const markerXY = ref<[number, number]>([0, 0])
 
- 
+const points = props.osrm.getPoints().value
+
+const classPoint = computed(() => {
+    if (props.i == 0 || props.i == (points.length - 1)) {
+        return "RoutePointCircle"
+    }
+
+    return "RoutePointBox"
+})
 
 const onRemove = () => props.osrm.removePoint(props.i)
 
@@ -61,6 +69,8 @@ window.olMap.on('click', (e) => {
 
 </script>
 <style lang="scss" scoped>
+.box {}
+
 .moveMarker {
     position: fixed;
     transform: translateX(-50%) translateY(-100%);
@@ -109,8 +119,6 @@ window.olMap.on('click', (e) => {
 
     &Circle {
         display: flex;
-        max-width: 15px;
-        max-height: 15px;
         min-width: 15px;
         min-height: 15px;
         width: 15px;
@@ -118,6 +126,16 @@ window.olMap.on('click', (e) => {
         border-radius: 100%;
     }
 
+    &Box {
+        display: flex;
+        min-width: 10px;
+        min-height: 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        margin-right: 5px;
+        margin-left: 10px;
+    }
 
 
 }

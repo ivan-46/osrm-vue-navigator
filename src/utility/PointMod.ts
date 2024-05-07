@@ -48,8 +48,8 @@ export default class PointRouter implements IPointRouter {
     address: string | null = null;
     id: string = uuidv4();
     color: string;
-    vectorSource: VectorSource<Feature<Point>>;
-    events: { [key: string]: EventHandler[] };
+    vectorSource: VectorSource<Feature<Point>>
+    events: { [key: string]: EventHandler[] }
     private saveInterval: number = -1
     constructor(vectorSource: VectorSource<Feature<Point>>, feature: Feature<Point> | null, color: string) {
         if (feature) {

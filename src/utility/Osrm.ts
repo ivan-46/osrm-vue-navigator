@@ -8,7 +8,12 @@ import PointRouter from './PointMod';
 import { ref } from 'vue';
 
 
-
+function getRandomColor() {
+    const randomRed = Math.floor(Math.random() * 256);
+    const randomGreen = Math.floor(Math.random() * 256);
+    const randomBlue = Math.floor(Math.random() * 256);
+    return `#${randomRed.toString(16).padStart(2, '0')}${randomGreen.toString(16).padStart(2, '0')}${randomBlue.toString(16).padStart(2, '0')}`;
+}
 
 
 type TEventNames = 'updatePoints'
@@ -32,7 +37,7 @@ export default class OsrmNavigator {
 
     _points = ref<PointRouter[]>([])
 
-    colors = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#00FFFF", "#0000FF", "#800080", "#FFC0CB"]
+
 
     modify: Modify | undefined;
 
@@ -89,8 +94,8 @@ export default class OsrmNavigator {
             return
         }
 
-        this._points.value.push(new PointRouter(source, null, this.colors[this._points.value.length]))
-      
+        this._points.value.push(new PointRouter(source, null, getRandomColor()))
+
     }
 
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-
-import { ref } from 'vue'
+ 
 import RoutePoint from './components/RoutePoint/RoutePoint.vue'
 import OsrmNavigator from './utility/Osrm'
 
