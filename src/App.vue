@@ -1,5 +1,5 @@
 <script setup lang="ts">
- 
+
 import RoutePoint from './components/RoutePoint/RoutePoint.vue'
 import OsrmNavigator from './utility/Osrm'
 
@@ -7,12 +7,21 @@ import OsrmNavigator from './utility/Osrm'
 const osrm = new OsrmNavigator(window.olMap)
 const points = osrm.getPoints()
 
- 
+const addPoint = () => {
+  if (points.value.length < 9) {
+    osrm.addPoint()
+  }
 
-//test
-for (let i = 0; i < 8; i++) {
-  osrm.addPoint()
 }
+
+const reset = () => {
+  osrm.reset
+  for (let i = 0; i < 2; i++) {
+    osrm.addPoint()
+  }
+}
+reset()
+//test
 
 
 
@@ -29,6 +38,10 @@ for (let i = 0; i < 8; i++) {
     <div class="osrmList">
       <RoutePoint v-for="(point, i) in points" :i="i" :point="point" :osrm="osrm" :key="point.id" />
     </div>
+    <div class="osrmBtns">
+      <p @click="addPoint">Add</p>
+      <p @click="reset">Reset</p>
+    </div>
   </div>
 </template>
 
@@ -41,6 +54,25 @@ for (let i = 0; i < 8; i++) {
     display: flex;
     flex-direction: column;
     gap: 5px;
+  }
+
+  &Btns {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 0 20px;
+
+    p {
+      color: rgba(255, 255, 255, 0.9);
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        color: rgba(136, 144, 255, 0.9);
+      }
+    }
+
   }
 
   &TypeRouter {

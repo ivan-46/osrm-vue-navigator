@@ -77,6 +77,7 @@ export default class PointRouter implements IPointRouter {
 
     private createStyleforPoint(color: string) {
         return [new Style({
+            
             image: new Circle({
                 radius: 4,
                 fill: new Fill({

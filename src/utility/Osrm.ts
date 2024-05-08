@@ -8,6 +8,8 @@ import PointRouter from './PointMod';
 import { ref } from 'vue';
 import { transform } from 'ol/proj';
 import GeoJSON from 'ol/format/GeoJSON';
+import Style from 'ol/style/Style';
+import Stroke from 'ol/style/Stroke';
 
 function getRandomColor() {
     const randomRed = Math.floor(Math.random() * 256);
@@ -26,7 +28,13 @@ export default class OsrmNavigator {
 
     map: Map
     layersRouteLayer = new VectorLayer({
-        source: new VectorSource({})
+        source: new VectorSource({}),
+        style: new Style({
+            stroke: new Stroke({
+                width: 3,
+                color: "#0087ff"
+            })
+        })
     })
 
     layersRouteSource = this.layersRouteLayer.getSource()
@@ -84,7 +92,11 @@ export default class OsrmNavigator {
         this.map.removeLayer(this.layersRouteLayer)
     }
 
-
+    reset() {
+        this._points.value = []
+        this.layersPointsLayer.getSource()?.clear()
+        this.layersRouteLayer.getSource()?.clear()
+    }
     getPoints() {
         return this._points
     }
@@ -96,7 +108,7 @@ export default class OsrmNavigator {
             return
         }
 
-        this._points.value.push(new PointRouter(source, null, getRandomColor()))
+        this._points.value.splice(this._points.value.length - 1, 0, new PointRouter(source, null, getRandomColor()))
 
     }
 
@@ -108,19 +120,20 @@ export default class OsrmNavigator {
 
 
     async getFeatchOsrmApi() {
-        // fetch("https://routing.openstreetmap.de/routed-car/route/v1/driving/5.570068359375001,50.28231945008158;8.596801757812502,49.674737880665994?overview=false&alternatives=true&steps=true")
+        const fileterCoordinate = this._points.value.filter(item => item.getCoordinate())
+        if (fileterCoordinate.length > 1) {
+            const coordinate = fileterCoordinate.map(item => transform(item.getCoordinate() ?? [], 'EPSG:3857', 'EPSG:4326')?.join(",")).join(";")
+            fetch(`https://routing.openstreetmap.de/routed-car/route/v1/driving/${coordinate}?overview=full&geometries=geojson`).then(r => r.json()).then(r => {
+                this.layersRouteSource?.clear()
+                const f = new GeoJSON().readFeature(r.routes[0].geometry, {
+                    featureProjection: 'EPSG:3857',
+                    dataProjection: 'EPSG:4326'
+                })
 
-        const coordinate = this._points.value.filter(item => item.getCoordinate()).map(item => transform(item.getCoordinate() ?? [], 'EPSG:3857', 'EPSG:4326')?.join(",")).join(";")
-        console.log(coordinate)
-        fetch(`https://routing.openstreetmap.de/routed-car/route/v1/driving/${coordinate}?overview=full&geometries=geojson`).then(r => r.json()).then(r => {
-            this.layersRouteSource?.clear()
-            const f = new GeoJSON().readFeature(r.routes[0].geometry, {
-                featureProjection: 'EPSG:3857',
-                dataProjection: 'EPSG:4326'
+                this.layersRouteSource?.addFeature(f)
             })
+        }
 
-            this.layersRouteSource?.addFeature(f)
-        })
     }
 
 }
